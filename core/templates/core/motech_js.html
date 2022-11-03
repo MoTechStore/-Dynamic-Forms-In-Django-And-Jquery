@@ -1,0 +1,54 @@
+<script type="text/javascript">
+  $(document).ready(function(){
+
+  	$('#save_btn').hide();
+  	var x = 0;
+
+  	$('#add_btn').click(function(e){
+  		e.preventDefault();
+  		console.log('Button Save Clicked');
+  		appendRow(); // appen dnew element to form 
+        x++; // increment counter for form
+        $('#save_btn').show(); // show save button for form
+
+  	});
+
+
+  	$('#input_wrapper').on('click', '.deleteBtn', function(e) {
+    e.preventDefault();
+    var id = e.currentTarget.id; // set the id based on the event 'e'
+    $('div[id='+id+']').remove(); //find div based on id and remove
+    x--; // decrement the counter for form.
+    
+    if (x === 0) { 
+      $('#save_btn').hide(); // hides the save button if counter is equal to zero
+    }
+  });
+
+
+
+function appendRow() {
+$('#input_wrapper').append(
+'<div id="'+x+'" class="form-group">' +
+'<label id="'+x+'" >First Name</label>' +
+'<input id="'+x+'" type="text" class="form-control" placeholder="Enter First Name">' +
+'</div id="'+x+'">' +
+'<div id="'+x+'" class="form-group">' +
+'<label id="'+x+'" >Last Name</label>' +
+'<input id="'+x+'" type="text" class="form-control" id="" placeholder="Enter Last Name">' +
+'</div id="'+x+'">' +
+'<div id="'+x+'" class="form-group">' +
+'<label id="'+x+'">Your Opinion</label>' +
+'<textarea class="form-control" id="'+x+'" rows="3"></textarea>' +
+'</div>' +
+'<div id="'+x+'" class="form-group row">' +
+    '<div id="'+x+'" class="col-sm-10 offset-sm">' +
+    '<button id="'+x+'" class="btn btn-danger deleteBtn fa fa-trash"><i class="fas fa-trash"> Delete Form </i></button>' +
+    '</div>' +
+    '</div>');
+ }
+
+
+
+});
+</script>

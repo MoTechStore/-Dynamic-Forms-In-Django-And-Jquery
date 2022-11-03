@@ -1,0 +1,181 @@
+<script type="text/javascript">
+$(document).ready(function(){
+
+ $("#save_btn").hide();
+ var x =0;
+
+ $("#add_btn").click(function(e){
+ 	e.preventDefault();
+ 	console.log('Button Form Clicked');
+ 	appendRow();
+ 	x++;
+
+ 	$("#save_btn").show();
+ });
+
+
+
+ 	$('#input_wrapper').on('click', '.deleteBtn', function(e) {
+    e.preventDefault();
+    var id = e.currentTarget.id; // set the id based on the event 'e'
+    $('div[id='+id+']').remove(); //find div based on id and remove
+    x--; // decrement the counter for form.
+    
+    if (x === 0) { 
+      $('#save_btn').hide(); // hides the save button if counter is equal to zero
+    }
+  });
+
+
+$("#save_btn").click(function(e){
+  e.preventDefault(e);
+  console.log("Save Button Clicked");
+  var formData = $("#test_form").serializeObject();
+  var obj;
+
+  var fnarray = [];
+  var lnarray = [];
+  var oparray = [];
+
+  console.log("Data is ",formData);
+
+  if(Array.isArray(formData.fn)){
+    console.log("There are more than one form");
+
+    obj = {};
+
+    for(var i=0; i<formData.fn.length; i++){
+
+      obj.firstname = formData.fn[i];
+      obj.lastname = formData.ln[i];
+      obj.opinion = formData.op[i];
+
+      fnarray.push(formData.fn[i]);
+      lnarray.push(formData.ln[i]);
+      oparray.push(formData.op[i]);
+
+      console.log('Object from form Array',obj);
+
+
+    }
+
+
+    console.log('First Name from Array',fnarray);
+    console.log('Last Name from Array',lnarray);
+    console.log('Opinion from Array',oparray);
+
+        $.ajax({
+       type: 'POST',
+       url: "{% url 'techajax' %}",
+       headers: {'X-CSRFToken': '{{ csrf_token }}'},
+       data: {'fn':fnarray, 'ln':lnarray, 'op':oparray},
+
+       success: function(data){
+         x = data.status;
+         $("#test_form")[0].reset();
+         if(x == 1){
+          alert("Form Submitted Successfully");
+         }
+
+         if(x == 0){
+          alert("Data Is Not Submitted, Failed");
+         }
+
+       }
+    })
+
+
+  } else {
+    console.log("There is only one form");
+    obj = {};
+    obj.firstname = formData.fn;
+    obj.lastname = formData.ln;
+    obj.opinion = formData.op;
+
+    fnarray.push(formData.fn);
+    lnarray.push(formData.ln);
+    oparray.push(formData.op);
+
+    console.log("Single Obj From Form is",obj);
+    console.log("First Name is",fnarray);
+    console.log("Last Name Is",lnarray);
+    console.log("Opinion is",oparray);
+
+    $.ajax({
+       type: 'POST',
+       url: "{% url 'techajax' %}",
+       headers: {'X-CSRFToken': '{{ csrf_token }}'},
+       data: {'fn':fnarray, 'ln':lnarray, 'op':oparray},
+
+       success: function(data){
+         x = data.status;
+         $("#test_form")[0].reset();
+         if(x == 1){
+          alert("Form Submitted Successfully");
+         }
+
+         if(x == 0){
+          alert("Data Is Not Submitted, Failed");
+         }
+
+       }
+    })
+
+  }
+
+
+
+
+});
+
+
+
+ function appendRow(){
+ 	$("#input_wrapper").append(
+ '<div id="'+x+'" class="form-group">' +
+ '<label id="'+x+'" >First Name</label>' +
+'<input id="'+x+'" type="text" class="form-control" placeholder="Enter First Name" name="fn">' +
+                '</div id="'+x+'">' +
+                 '<div id="'+x+'" class="form-group">' +
+                    '<label id="'+x+'">Last Name</label>' +
+                    '<input id="'+x+'" type="text" class="form-control" placeholder="Enter Last Name" name="ln">'+
+               ' </div id="'+x+'">' +
+                 '<div id="'+x+'" class="form-group">' +
+                    '<label id="'+x+'" >Your Opinion</label>' +
+                   ' <textarea name="op" id="'+x+'" class="form-control" rows="3"></textarea>' +
+                '</div id="'+x+'">' +
+                '<div id="'+x+'" class="form-group">' +
+                    '<div id="'+x+'" class="col-sm-10">' +
+                      '  <button id="'+x+'" class="btn btn-danger deleteBtn">Delete Form</button>' +
+                    '</div id="'+x+'">' +
+                '</div id="'+x+'">');
+ }
+
+
+$.fn.serializeObject = function(asString) {
+   var o = {};
+   var a = this.serializeArray();
+   $.each(a, function() {
+
+       if($('#' + this.name).hasClass('date')) {
+           this.value = new Date(this.value).setHours(12);
+       }
+
+       if (o[this.name] !== undefined) {
+           if (!o[this.name].push) {
+               o[this.name] = [o[this.name]];
+           }
+           o[this.name].push(this.value || '');
+       } else {
+           o[this.name] = this.value || '';
+       }
+   });
+   if (asString) {
+       return JSON.stringify(o);
+   }
+   return o;
+};
+
+
+});
+</script>
